@@ -1,3 +1,6 @@
+
+[![](https://jitpack.io/v/DeMonLiu623/CrashHandler.svg)](https://jitpack.io/#DeMonLiu623/CrashHandler)
+
 ### 使用
 
 ```java
