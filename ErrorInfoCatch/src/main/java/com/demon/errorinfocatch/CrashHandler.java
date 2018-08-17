@@ -20,9 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Properties;
-import java.util.TreeSet;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
@@ -105,7 +103,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         } else {
             //Sleep一会后结束程序
             try {
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Log.e(TAG, "Error : ", e);
             }
@@ -135,7 +133,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         collectCrashDeviceInfo(mContext);
         //保存错误报告文件
         saveCrashInfoToFile(ex);
-        Log.i(TAG, "handleException: " + saveCrashInfoToFile(ex));
         //发送错误报告到服务器
         //sendCrashReportsToServer(mContext);
         return true;
@@ -206,8 +203,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(),
                     PackageManager.GET_ACTIVITIES);
             if (pi != null) {
-                mDeviceCrashInfo.put(VERSION_NAME,
-                        pi.versionName == null ? "not set" : pi.versionName);
+                mDeviceCrashInfo.put(VERSION_NAME, pi.versionName == null ? "not set" : pi.versionName);
                 mDeviceCrashInfo.put(VERSION_CODE, "" + pi.versionCode);
             }
         } catch (PackageManager.NameNotFoundException e) {
