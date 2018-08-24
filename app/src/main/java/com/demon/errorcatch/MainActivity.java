@@ -1,12 +1,10 @@
 package com.demon.errorcatch;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 
-import com.demon.errorinfocatch.CrashHandler;
 import com.demon.errorinfocatch.DLog;
+import com.orhanobut.logger.Logger;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -16,16 +14,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String[] strings = CrashHandler.getCrashReportFiles(this);
-        for (int i = 0; i < strings.length; i++) {
-            Log.i(TAG, "onCreate: " + strings[i]);
-        }
-
-        findViewById(R.id.bug).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick: " + dLog.toString());
-            }
-        });
+        Logger.d("debug");
+        Logger.e("error");
+        Logger.w("warning");
+        Logger.v("verbose");
+        Logger.i("information");
+        Logger.wtf("What a Terrible Failure");
     }
 }
