@@ -1,11 +1,7 @@
 package com.demon.errorinfocatch;
 
-/**
- * @author DeMon
- * @date 2018/8/14
- * @description
- */
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,13 +11,23 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 
+/**
+ * @author DeMon
+ * @date 2018/8/14
+ * @description
+ */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     /**
@@ -41,18 +47,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     private Context mContext;
     /**
-     * 使用Properties来保存设备的信息和错误堆栈信息
-     */
-    private Properties mDeviceCrashInfo = new Properties();
-    private static final String VERSION_NAME = "versionName";
-    private static final String VERSION_CODE = "versionCode";
-    private static final String STACK_TRACE = "STACK_TRACE";
-    /**
      * 错误报告文件的扩展名
      */
     private static final String CRASH_REPORTER_EXTENSION = ".text";
-
-    private static Object syncRoot = new Object();
 
     /**
      * 保证只有一个CrashHandler实例
@@ -64,13 +61,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 获取CrashHandler实例 ,单例模式
      */
     public static CrashHandler getInstance() {
-       /* if (INSTANCE == null) {
-            INSTANCE = new CrashHandler();
-        }
-        return INSTANCE;*/
-        // 防止多线程访问安全，这里使用了双重锁
         if (INSTANCE == null) {
-            synchronized (syncRoot) {
+            synchronized (CrashHandler.class) {
                 if (INSTANCE == null) {
                     INSTANCE = new CrashHandler();
                 }
@@ -101,9 +93,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             //如果用户没有处理则让系统默认的异常处理器来处理
             mDefaultHandler.uncaughtException(thread, ex);
         } else {
-            //结束程序
-            android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(1);
+            android.os.Process.killProcess(android.os.Process.myPid()); //关闭进程
+            System.exit(0);//结束程序
         }
     }
 
@@ -125,11 +116,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             return false;
         }
         //收集设备信息
-        collectCrashDeviceInfo(mContext);
         //保存错误报告文件
         saveCrashInfoToFile(ex);
-        //发送错误报告到服务器
-        //sendCrashReportsToServer(mContext);
         return true;
     }
 
@@ -167,55 +155,31 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         }
         String result = info.toString();
         printWriter.close();
-        mDeviceCrashInfo.put("EXEPTION", ex.getLocalizedMessage());
-        mDeviceCrashInfo.put(STACK_TRACE, result);
+        StringBuilder sb = new StringBuilder();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        String now = sdf.format(new Date());
+        sb.append("Time:").append(now);//崩溃时间
         try {
-            //long timestamp = System.currentTimeMillis();
-            Time t = new Time("GMT+8");
-            t.setToNow(); // 取得系统时间
-            int date = t.year * 10000 + t.month * 100 + t.monthDay;
-            int time = t.hour * 10000 + t.minute * 100 + t.second;
-            String fileName = date + "-" + time + CRASH_REPORTER_EXTENSION;
-            FileOutputStream trace = new FileOutputStream(new File(FileUtil.getCrashFile(mContext) + fileName));
-            mDeviceCrashInfo.store(trace, "");
-            trace.flush();
-            trace.close();
-            return fileName;
+            PackageManager pm = mContext.getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
+            if (pi != null) {
+                sb.append("\nVERSION_CODE:").append(pi.versionCode);//软件版本号
+                sb.append("\nDEBUG:").append(BuildConfig.DEBUG + "");//是否是DEBUG版本
+            }
+            //设备信息
+            sb.append("\nMODEL:").append(android.os.Build.MODEL);
+            sb.append("\nRELEASE:").append(Build.VERSION.RELEASE);
+            sb.append("\nSDK:").append(Build.VERSION.SDK_INT);
+            sb.append("\nEXEPTION:").append(ex.getLocalizedMessage());
+            sb.append("\nSTACK_TRACE:").append(result);
+            FileWriter writer = new FileWriter(FileUtil.getCrashFile(mContext) + now + CRASH_REPORTER_EXTENSION);
+            writer.write(sb.toString());
+            writer.flush();
+            writer.close();
         } catch (Exception e) {
-            Log.e(TAG, "an error occured while writing report file...", e);
+            e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * 收集程序崩溃的设备信息
-     *
-     * @param ctx
-     */
-    public void collectCrashDeviceInfo(Context ctx) {
-        try {
-            PackageManager pm = ctx.getPackageManager();
-            PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(),
-                    PackageManager.GET_ACTIVITIES);
-            if (pi != null) {
-                mDeviceCrashInfo.put(VERSION_NAME, pi.versionName == null ? "not set" : pi.versionName);
-                mDeviceCrashInfo.put(VERSION_CODE, "" + pi.versionCode);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Error while collect package info", e);
-        }
-        //使用反射来收集设备信息.在Build类中包含各种设备信息,
-        //例如: 系统版本号,设备生产商 等帮助调试程序的有用信息
-        //具体信息请参考后面的截图
-        Field[] fields = Build.class.getDeclaredFields();
-        for (Field field : fields) {
-            try {
-                field.setAccessible(true);
-                mDeviceCrashInfo.put(field.getName(), "" + field.get(null));
-            } catch (Exception e) {
-                Log.e(TAG, "Error while collect crash info", e);
-            }
-        }
     }
 
 

@@ -34,6 +34,6 @@ public class FileUtil {
     }
 
     public static  String getCrashFile(Context mContext) {
-        return FileUtil.getPath(mContext, "Crash");
+        return FileUtil.getPath(mContext, "Crash/");
     }
 }
