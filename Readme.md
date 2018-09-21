@@ -4,7 +4,7 @@
 ### ErrorCatch
 **一个基于Thread.UncaughtExceptionHandler实现手机Android程序崩溃异常信息的库。**
 
-本库的具体实现，可以参考：
+本库的具体实现，可以参考：[Android 收集程序崩溃异常信息](ttps://blog.csdn.net/DeMonliuhui/article/details/82798484)
 
  
 ### 使用
@@ -21,6 +21,11 @@ allprojects {
 
 #### Module的build.gradle
 
+```
+dependencies {
+	        implementation 'com.github.DeMonLiu623:CrashHandler:v1.0'
+	}
+```
 
 #### 初始化
 初始化后每次程序崩溃发生便会自动收集错误信息，并保存下来。
