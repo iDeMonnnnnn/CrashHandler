@@ -18,10 +18,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         List<String> list = new ArrayList<>();
 
-        String[] strings = CrashHandler.getCrashReportFiles(this);
+        String[] strings = CrashHandler.getCrashReportFiles(this);//获取异常文件路径
         for (int i = 0; i < strings.length; i++) {
             Log.i(TAG, "onCreate: " + strings[i]);
         }
-        Log.i(TAG, "onCreate: " + list.get(1));
+
+        Log.i(TAG, "onCreate: " + list.get(1));//模拟数组越界
     }
 }
