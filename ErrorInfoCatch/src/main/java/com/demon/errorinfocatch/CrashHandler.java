@@ -3,25 +3,17 @@ package com.demon.errorinfocatch;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Build;
-import android.text.format.Time;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Properties;
 
 /**
  * @author DeMon
@@ -30,18 +22,11 @@ import java.util.Properties;
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
-    /**
-     * Debug Log tag
-     */
-    public static final String TAG = "CrashHandler";
+    private static final String TAG = "CrashHandler";
     /**
      * 系统默认的UncaughtException处理类
      */
     private Thread.UncaughtExceptionHandler mDefaultHandler;
-    /**
-     * CrashHandler实例
-     */
-    private static CrashHandler INSTANCE;
     /**
      * 程序的Context对象
      */
@@ -50,6 +35,11 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 错误报告文件的扩展名
      */
     private static final String CRASH_REPORTER_EXTENSION = ".text";
+
+    /**
+     * CrashHandler实例
+     */
+    private static CrashHandler INSTANCE;
 
     /**
      * 保证只有一个CrashHandler实例
@@ -89,12 +79,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        if (!handleException(ex) && mDefaultHandler != null) {
-            //如果用户没有处理则让系统默认的异常处理器来处理
+        handleException(ex);
+        if (mDefaultHandler != null) {
+            //收集完信息后，交给系统自己处理崩溃
             mDefaultHandler.uncaughtException(thread, ex);
-        } else {
-            android.os.Process.killProcess(android.os.Process.myPid()); //关闭进程
-            System.exit(0);//结束程序
         }
     }
 
@@ -102,40 +90,37 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 自定义错误处理,收集错误信息
      * 发送错误报告等操作均在此完成.
      * 开发者可以根据自己的情况来自定义异常处理逻辑
-     *
-     * @param ex
-     * @return true:如果处理了该异常信息;否则返回false
      */
-    private boolean handleException(Throwable ex) {
+    private void handleException(Throwable ex) {
         if (ex == null) {
-            Log.w(TAG, "handleException --- ex==null");
-            return true;
+            Log.w(TAG, "handleException--- ex==null");
+            return;
         }
-        final String msg = ex.getLocalizedMessage();
+        String msg = ex.getLocalizedMessage();
         if (msg == null) {
-            return false;
+            return;
         }
         //收集设备信息
         //保存错误报告文件
         saveCrashInfoToFile(ex);
-        return true;
     }
 
 
     /**
-     * 获取错误报告文件名
+     * 获取错误报告文件路径
      *
      * @param ctx
      * @return
      */
     public static String[] getCrashReportFiles(Context ctx) {
         File filesDir = new File(FileUtil.getCrashFile(ctx));
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(CRASH_REPORTER_EXTENSION);
-            }
-        };
-        return filesDir.list(filter);
+        String[] fileNames = filesDir.list();
+        int length = fileNames.length;
+        String[] filePaths = new String[length];
+        for (int i = 0; i < length; i++) {
+            filePaths[i] = FileUtil.getCrashFile(ctx) + fileNames[i];
+        }
+        return filePaths;
     }
 
     /**
@@ -144,7 +129,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * @param ex
      * @return
      */
-    private String saveCrashInfoToFile(Throwable ex) {
+    private void saveCrashInfoToFile(Throwable ex) {
         Writer info = new StringWriter();
         PrintWriter printWriter = new PrintWriter(info);
         ex.printStackTrace(printWriter);
@@ -158,20 +143,19 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         StringBuilder sb = new StringBuilder();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         String now = sdf.format(new Date());
-        sb.append("Time:").append(now);//崩溃时间
+        sb.append("TIME:").append(now);//崩溃时间
+        //程序信息
+        sb.append("\nAPPLICATION_ID:").append(BuildConfig.APPLICATION_ID);//软件APPLICATION_ID
+        sb.append("\nVERSION_CODE:").append(BuildConfig.VERSION_CODE);//软件版本号
+        sb.append("\nVERSION_NAME:").append(BuildConfig.VERSION_NAME);//VERSION_NAME
+        sb.append("\nBUILD_TYPE:").append(BuildConfig.BUILD_TYPE);//是否是DEBUG版本
+        //设备信息
+        sb.append("\nMODEL:").append(android.os.Build.MODEL);
+        sb.append("\nRELEASE:").append(Build.VERSION.RELEASE);
+        sb.append("\nSDK:").append(Build.VERSION.SDK_INT);
+        sb.append("\nEXCEPTION:").append(ex.getLocalizedMessage());
+        sb.append("\nSTACK_TRACE:").append(result);
         try {
-            PackageManager pm = mContext.getPackageManager();
-            PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
-            if (pi != null) {
-                sb.append("\nVERSION_CODE:").append(pi.versionCode);//软件版本号
-                sb.append("\nDEBUG:").append(BuildConfig.DEBUG + "");//是否是DEBUG版本
-            }
-            //设备信息
-            sb.append("\nMODEL:").append(android.os.Build.MODEL);
-            sb.append("\nRELEASE:").append(Build.VERSION.RELEASE);
-            sb.append("\nSDK:").append(Build.VERSION.SDK_INT);
-            sb.append("\nEXEPTION:").append(ex.getLocalizedMessage());
-            sb.append("\nSTACK_TRACE:").append(result);
             FileWriter writer = new FileWriter(FileUtil.getCrashFile(mContext) + now + CRASH_REPORTER_EXTENSION);
             writer.write(sb.toString());
             writer.flush();
@@ -179,7 +163,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
     }
 
 
