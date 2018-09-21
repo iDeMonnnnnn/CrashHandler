@@ -46,7 +46,7 @@ public class App extends Application {
 1. 为方便查看，收集的信息存储到txt文件中，然后默认保存在sd卡根目录/你的app_name/Crash/ (如：```storage/emulated/0/ErrorCatch/Crash/2018-09-21 09:42:59.text```)
 2. ```CrashHandler.getCrashReportFiles(Context ctx)```方法可以返回所有的错误信息文件路径，可以根据文件路径上传到服务器，然后将其删除，防止重复上传。
 
-![这是一张本地图片](https://github.com/DeMonLiu623/CrashHandler/blob/master/img/demo.png)
+![这是一张本地图片](https://github.com/DeMonLiu623/CrashHandler/raw/master/img/demo.png)
 
 ### BUG or 问题
 请E-mail：757454343@qq.com 联系我。
