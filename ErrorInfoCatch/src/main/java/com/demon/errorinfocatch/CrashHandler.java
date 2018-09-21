@@ -4,10 +4,12 @@ package com.demon.errorinfocatch;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -113,12 +115,12 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * @return
      */
     public static String[] getCrashReportFiles(Context ctx) {
-        File filesDir = new File(FileUtil.getCrashFile(ctx));
+        File filesDir = new File(getCrashFilePath(ctx));
         String[] fileNames = filesDir.list();
         int length = fileNames.length;
         String[] filePaths = new String[length];
         for (int i = 0; i < length; i++) {
-            filePaths[i] = FileUtil.getCrashFile(ctx) + fileNames[i];
+            filePaths[i] = getCrashFilePath(ctx) + fileNames[i];
         }
         return filePaths;
     }
@@ -156,7 +158,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         sb.append("\nEXCEPTION:").append(ex.getLocalizedMessage());
         sb.append("\nSTACK_TRACE:").append(result);
         try {
-            FileWriter writer = new FileWriter(FileUtil.getCrashFile(mContext) + now + CRASH_REPORTER_EXTENSION);
+            FileWriter writer = new FileWriter(getCrashFilePath(mContext) + now + CRASH_REPORTER_EXTENSION);
             writer.write(sb.toString());
             writer.flush();
             writer.close();
@@ -165,5 +167,23 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         }
     }
 
-
+    /**
+     * 获取文件夹路径
+     *
+     * @param context
+     * @return
+     */
+    private static String getCrashFilePath(Context context) {
+        String path = null;
+        try {
+            path = Environment.getExternalStorageDirectory().getCanonicalPath() + "/" + context.getResources().getString(R.string.app_name) + "/Crash/";
+            File file = new File(path);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return path;
+    }
 }
