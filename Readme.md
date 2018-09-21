@@ -2,7 +2,7 @@
 [![](https://jitpack.io/v/DeMonLiu623/CrashHandler.svg)](https://jitpack.io/#DeMonLiu623/CrashHandler)
 
 ### ErrorCatch
-**一个基于Thread.UncaughtExceptionHandler实现手机Android程序崩溃异常信息的库。**
+**一个基于Thread.UncaughtExceptionHandler实现收集Android程序崩溃异常信息的库。**
 
 本库的具体实现，可以参考：[Android 收集程序崩溃异常信息](https://blog.csdn.net/DeMonliuhui/article/details/82798484)
 
