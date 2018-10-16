@@ -22,7 +22,7 @@ allprojects {
 
 ```
 dependencies {
-	        implementation 'com.github.DeMonLiu623:CrashHandler:v1.0'
+	        implementation 'com.github.DeMonLiu623:CrashHandler:v1.1'
 	}
 ```
 
@@ -43,7 +43,7 @@ public class App extends Application {
 }
 ```
 #### 错误信息处理
-1. 为方便查看，收集的信息存储到txt文件中，然后默认保存在sd卡根目录/你的app_name/Crash/ (如：```storage/emulated/0/ErrorCatch/Crash/2018-09-21 09:42:59.text```)
+1. 为方便查看，收集的信息存储到txt文件中，然后默认保存在sd卡根目录/你的app_name/Crash/ (如：```storage/emulated/0/ErrorCatch/Crash/2018-09-21 09:42:59.txt```)
 2. ```CrashHandler.getCrashReportFiles(Context ctx)```方法可以返回所有的错误信息文件路径，可以根据文件路径上传到服务器，然后将其删除，防止重复上传。
 
 ![Effect](https://raw.githubusercontent.com/DeMonLiu623/CrashHandler/master/img/demo.png)
