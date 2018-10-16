@@ -36,7 +36,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * 错误报告文件的扩展名
      */
-    private static final String CRASH_REPORTER_EXTENSION = ".text";
+    private static final String CRASH_REPORTER_EXTENSION = ".txt";
 
     /**
      * CrashHandler实例
