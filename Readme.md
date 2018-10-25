@@ -26,6 +26,14 @@ dependencies {
 	}
 ```
 
+#### 权限
+
+需要读取设备内容的权限。
+```
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+```
+
 #### 初始化
 初始化后每次程序崩溃发生便会自动收集错误信息，并保存下来。
 
@@ -44,7 +52,7 @@ public class App extends Application {
 ```
 #### 错误信息处理
 1. 为方便查看，收集的信息存储到txt文件中，然后默认保存在sd卡根目录/你的app_name/Crash/ (如：```storage/emulated/0/ErrorCatch/Crash/2018-09-21 09:42:59.txt```)
-2. ```CrashHandler.getCrashReportFiles(Context ctx)```方法可以返回所有的错误信息文件路径，可以根据文件路径上传到服务器，然后将其删除，防止重复上传。
+2. 调用```CrashHandler.getCrashReportFiles(Context ctx)```方法可以返回所有的错误信息文件路径，你可以根据该文件路径，自己写方法将文件内容上传到指定的服务器，然后将上传成功的文件删除，防止下次调用重复上传。（**本框架没有自动上传的功能，需要自己处理！！！**）
 
 ![Effect](https://raw.githubusercontent.com/DeMonLiu623/CrashHandler/master/img/demo.png)
 
