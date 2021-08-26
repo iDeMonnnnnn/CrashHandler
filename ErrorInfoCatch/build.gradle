@@ -1,14 +1,13 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.DeMonLiu623'
 android {
-    compileSdkVersion 28
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+    compileSdkVersion androidCompileVersion
 
+    defaultConfig {
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetVersion
+        buildConfigField "String", 'APPLICATION_ID', "\"${appApplicationId}\""
+        buildConfigField "int", 'VERSION_CODE', "${appVersionCode}"
+        buildConfigField "String", 'VERSION_NAME', "\"${appVersionName}\""
     }
 
     buildTypes {

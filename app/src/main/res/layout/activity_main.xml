@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,10 +9,38 @@
     tools:context=".MainActivity">
 
 
-  <Button
-      android:id="@+id/bug"
-      android:text="Bug"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/bug1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="数组越界异常"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/bug2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="空指针异常"
+        app:layout_constraintStart_toEndOf="@id/bug1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="错误日志文件列表"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bug1" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv"
+        tools:listitem="@layout/list_item" />
+</androidx.constraintlayout.widget.ConstraintLayout>

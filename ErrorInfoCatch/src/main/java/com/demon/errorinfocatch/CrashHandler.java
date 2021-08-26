@@ -1,21 +1,16 @@
 package com.demon.errorinfocatch;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * @author DeMon
@@ -36,8 +31,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * 错误报告文件的扩展名
      */
-    private static final String CRASH_REPORTER_EXTENSION = ".txt";
+    private static final String CRASH_REPORTER_EXTENSION = ".log";
 
+    @SuppressLint("SimpleDateFormat")
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
      * CrashHandler实例
      */
@@ -107,6 +104,65 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         saveCrashInfoToFile(ex);
     }
 
+    /**
+     * 保存错误信息到文件中
+     *
+     * @param ex
+     * @return
+     */
+    private void saveCrashInfoToFile(Throwable ex) {
+        try {
+            Writer info = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(info);
+            ex.printStackTrace(printWriter);
+            Throwable cause = ex.getCause();
+            while (cause != null) {
+                cause.printStackTrace(printWriter);
+                cause = cause.getCause();
+            }
+            String result = info.toString();
+            printWriter.close();
+            StringBuilder sb = new StringBuilder();
+            String now = sdf.format(new Date());
+            File logFile = new File(getCrashFilePath(mContext) + now + CRASH_REPORTER_EXTENSION);
+            if (!logFile.exists()) {
+                logFile.createNewFile();
+                //程序信息
+                sb.append("\nAPPLICATION_ID:").append(mContext.getPackageName());//软件APPLICATION_ID
+                sb.append("\nVERSION_CODE:").append(BuildConfig.VERSION_CODE + "");//软件版本号
+                sb.append("\nVERSION_NAME:").append(BuildConfig.VERSION_NAME);//VERSION_NAME
+                sb.append("\nBUILD_TYPE:").append(BuildConfig.BUILD_TYPE);//是否是DEBUG版本
+                //设备信息
+                sb.append("\nMODEL:").append(Build.MODEL);
+                sb.append("\nRELEASE:").append(Build.VERSION.RELEASE);
+                sb.append("\nSDK:").append(Build.VERSION.SDK_INT);
+                sb.append("\n");
+            }
+            //崩溃信息
+            sb.append("\nTIME:").append(now);//崩溃时间
+            sb.append("\nEXCEPTION:").append(ex.getLocalizedMessage());
+            sb.append("\nSTACK_TRACE:").append(result);
+            sb.append("\n");
+            DFileUtils.writeTxt(logFile.getAbsolutePath(), sb.toString(), true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取文件夹路径
+     *
+     * @param context
+     * @return
+     */
+    public static String getCrashFilePath(Context context) {
+        String path = context.getExternalFilesDir(null) + "/Crash/";
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return path;
+    }
 
     /**
      * 获取错误报告文件路径
@@ -120,70 +176,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         int length = fileNames.length;
         String[] filePaths = new String[length];
         for (int i = 0; i < length; i++) {
-            filePaths[i] = getCrashFilePath(ctx) + fileNames[i];
+            filePaths[i] = filesDir.getAbsolutePath() + "/" + fileNames[i];
         }
         return filePaths;
-    }
-
-    /**
-     * 保存错误信息到文件中
-     *
-     * @param ex
-     * @return
-     */
-    private void saveCrashInfoToFile(Throwable ex) {
-        Writer info = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(info);
-        ex.printStackTrace(printWriter);
-        Throwable cause = ex.getCause();
-        while (cause != null) {
-            cause.printStackTrace(printWriter);
-            cause = cause.getCause();
-        }
-        String result = info.toString();
-        printWriter.close();
-        StringBuilder sb = new StringBuilder();
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-        String now = sdf.format(new Date());
-        sb.append("TIME:").append(now);//崩溃时间
-        //程序信息
-        sb.append("\nAPPLICATION_ID:").append(BuildConfig.APPLICATION_ID);//软件APPLICATION_ID
-        sb.append("\nVERSION_CODE:").append(BuildConfig.VERSION_CODE);//软件版本号
-        sb.append("\nVERSION_NAME:").append(BuildConfig.VERSION_NAME);//VERSION_NAME
-        sb.append("\nBUILD_TYPE:").append(BuildConfig.BUILD_TYPE);//是否是DEBUG版本
-        //设备信息
-        sb.append("\nMODEL:").append(android.os.Build.MODEL);
-        sb.append("\nRELEASE:").append(Build.VERSION.RELEASE);
-        sb.append("\nSDK:").append(Build.VERSION.SDK_INT);
-        sb.append("\nEXCEPTION:").append(ex.getLocalizedMessage());
-        sb.append("\nSTACK_TRACE:").append(result);
-        try {
-            FileWriter writer = new FileWriter(getCrashFilePath(mContext) + now + CRASH_REPORTER_EXTENSION);
-            writer.write(sb.toString());
-            writer.flush();
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 获取文件夹路径
-     *
-     * @param context
-     * @return
-     */
-    private static String getCrashFilePath(Context context) {
-        String path = null;
-        try {
-            path = Environment.getExternalStorageDirectory().getCanonicalPath() + "/" + context.getResources().getString(R.string.app_name) + "/Crash/";
-            File file = new File(path);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return path;
     }
 }
