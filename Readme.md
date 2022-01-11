@@ -28,11 +28,11 @@ dependencies {
 
 #### 权限
 
-~~需要读取设备内容的权限。
+~~需要读取设备内容的权限。~~
 ```
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-```~~
+~~<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />~~~
+```
 
 #### 初始化
 初始化后每次程序崩溃发生便会自动收集错误信息，并保存下来。
