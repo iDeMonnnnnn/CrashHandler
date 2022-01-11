@@ -1,22 +1,18 @@
 package com.demon.errorcatch
 
 import android.content.Intent
-import android.content.pm.ApplicationInfo
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.demon.errorcatch.R
 import com.demon.errorinfocatch.CrashHandler
-import com.demon.errorcatch.MainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import java.io.File
-import java.lang.Exception
-import java.util.ArrayList
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,8 +33,7 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "bug1: " + list[1]) //模拟数组越界
         }
         bug2.setOnClickListener {
-            val info: ApplicationInfo? = null
-            val name = info!!.name
+            Log.i(TAG, "bug2:${10 / 0} ")
         }
     }
 
@@ -67,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: VH, position: Int) {
             val file = File(datas[position])
             holder.itemView.run {
-                tv_name.text = file.name
+                tv_name.text = datas[position]
                 btn_del.setOnClickListener {
                     file.delete()
                     datas.removeAt(position)
