@@ -2,6 +2,7 @@ package com.demon.errorinfocatch;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -121,14 +122,16 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             String now = sdf.format(new Date());
             File logFile = new File(getCrashFilePath(mContext) + now + CRASH_REPORTER_EXTENSION);
             if (!logFile.exists()) {
+                PackageInfo pi = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
                 logFile.createNewFile();
                 //程序信息
-                sb.append("\nAPPLICATION_ID:").append(mContext.getPackageName());//软件APPLICATION_ID
-                sb.append("\nVERSION_CODE:").append(BuildConfig.VERSION_CODE + "");//软件版本号
-                sb.append("\nVERSION_NAME:").append(BuildConfig.VERSION_NAME);//VERSION_NAME
-                sb.append("\nBUILD_TYPE:").append(BuildConfig.BUILD_TYPE);//是否是DEBUG版本
+                sb.append("APPLICATION_ID:").append(mContext.getPackageName());//软件APPLICATION_ID
+                sb.append("\nVERSION_CODE:").append(pi.versionCode + "");//软件版本号
+                sb.append("\nVERSION_NAME:").append(pi.versionName);//VERSION_NAME
+                sb.append("\nBUILD_TYPE:").append(BuildConfig.DEBUG);//是否是DEBUG版本
                 //设备信息
                 sb.append("\nMODEL:").append(Build.MODEL);
+                sb.append("\nMANUFACTURER:").append(Build.MANUFACTURER);
                 sb.append("\nRELEASE:").append(Build.VERSION.RELEASE);
                 sb.append("\nSDK:").append(Build.VERSION.SDK_INT);
                 sb.append("\n");

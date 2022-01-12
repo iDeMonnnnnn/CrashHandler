@@ -7,10 +7,6 @@ android {
 
     defaultConfig {
         minSdkVersion androidMinSdkVersion
-        targetSdkVersion androidTargetVersion
-        buildConfigField "String", 'APPLICATION_ID', "\"${appApplicationId}\""
-        buildConfigField "int", 'VERSION_CODE', "${appVersionCode}"
-        buildConfigField "String", 'VERSION_NAME', "\"${appVersionName}\""
     }
 
     buildTypes {
