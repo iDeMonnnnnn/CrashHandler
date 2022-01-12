@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
 }
 group = 'com.github.iDeMonnnnnn'
+
 android {
     compileSdkVersion androidCompileVersion
 
@@ -21,4 +22,18 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.iDeMonnnnnn'
+                artifactId = 'CrashHandler'
+                version = '1.0'
+            }
+        }
+    }
 }
