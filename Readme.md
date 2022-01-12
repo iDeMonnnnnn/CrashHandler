@@ -1,5 +1,5 @@
 
-[![](https://jitpack.io/v/DeMonLiu623/CrashHandler.svg)](https://jitpack.io/#DeMonLiu623/CrashHandler)
+[![](https://jitpack.io/v/iDeMonnnnnn/CrashHandler.svg)](https://jitpack.io/#iDeMonnnnnn/CrashHandler)
 
 ### CrashHandler
 **一个基于Thread.UncaughtExceptionHandler实现收集Android程序崩溃异常信息的库。**
@@ -9,8 +9,6 @@
 ### 使用
 
 #### 工程的build.gradle
-
-[latest_version](https://github.com/iDeMonnnnnn/CrashHandler/releases)
 
 ```
 allprojects {
@@ -22,10 +20,11 @@ allprojects {
 
 #### Module的build.gradle
 
+[latest_version](https://github.com/iDeMonnnnnn/CrashHandler/releases)
 ```
 dependencies {
-	        implementation 'com.github.DeMonLiu623:CrashHandler:$latest_version'
-	}
+  implementation 'com.github.iDeMonnnnnn:CrashHandler:$latest_version'
+}
 ```
 
 #### ~~权限~~
