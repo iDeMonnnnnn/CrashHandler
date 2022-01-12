@@ -57,8 +57,10 @@ public class App extends Application {
 
 
 #### 效果体验
+[demon.apk](https://github.com/iDeMonnnnnn/CrashHandler/raw/master/demon.apk)
 
-[demon.apk]()
+![]()![]()
+
 
 ### BUG or 问题
 请在issues留言，定期回复。
