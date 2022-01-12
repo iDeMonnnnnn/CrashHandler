@@ -55,7 +55,10 @@ public class App extends Application {
 (如：```/storage/emulated/0/Android/data/com.demon.errorcatch/files/Crash/2022-01-11 18:09:15.log```)
 2. 调用```CrashHandler.getCrashReportFiles(Context ctx)```方法可以返回所有的错误信息文件路径，你可以根据该文件路径，自己写方法将文件内容上传到指定的服务器，然后将上传成功的文件删除，防止下次调用重复上传。（**本框架没有自动上传的功能，需要自己处理！！！**）
 
-![Effect](https://raw.githubusercontent.com/iDeMonnnnnn/CrashHandler/master/img/demo.png)
+
+#### 效果体验
+
+[demon.apk]()
 
 ### BUG or 问题
 请在issues留言，定期回复。
