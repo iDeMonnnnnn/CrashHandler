@@ -10,6 +10,8 @@
 
 #### 工程的build.gradle
 
+[latest_version](https://github.com/iDeMonnnnnn/CrashHandler/releases)
+
 ```
 allprojects {
     repositories {
@@ -22,7 +24,7 @@ allprojects {
 
 ```
 dependencies {
-	        implementation 'com.github.DeMonLiu623:CrashHandler:v1.1'
+	        implementation 'com.github.DeMonLiu623:CrashHandler:$latest_version'
 	}
 ```
 
@@ -30,7 +32,7 @@ dependencies {
 
 ~~需要读取设备内容的存储权限。~~
 
->兼容AndroidQ作用域存储后，无需存储权限。
+>兼容AndroidQ作用域存储后，不再需要存储权限。
 
 #### 初始化
 初始化后每次程序崩溃发生便会自动收集错误信息，并保存下来。
