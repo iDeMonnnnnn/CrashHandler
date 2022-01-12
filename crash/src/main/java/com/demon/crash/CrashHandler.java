@@ -1,4 +1,4 @@
-package com.demon.errorinfocatch;
+package com.demon.crash;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

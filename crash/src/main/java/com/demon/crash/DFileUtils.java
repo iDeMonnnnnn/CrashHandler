@@ -1,4 +1,4 @@
-package com.demon.errorinfocatch;
+package com.demon.crash;
 
 import java.io.File;
 import java.io.FileReader;

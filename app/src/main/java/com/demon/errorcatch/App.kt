@@ -1,7 +1,7 @@
 package com.demon.errorcatch
 
 import android.app.Application
-import com.demon.errorinfocatch.CrashHandler
+import com.demon.crash.CrashHandler
 
 /**
  * @author DeMon

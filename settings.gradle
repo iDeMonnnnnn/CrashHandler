@@ -1,1 +1,2 @@
-include ':app', ':ErrorInfoCatch'
+include ':app'
+include ':crash'

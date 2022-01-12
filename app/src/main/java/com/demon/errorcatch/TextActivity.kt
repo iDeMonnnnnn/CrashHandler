@@ -1,8 +1,8 @@
 package com.demon.errorcatch
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.demon.errorinfocatch.DFileUtils
+import androidx.appcompat.app.AppCompatActivity
+import com.demon.crash.DFileUtils
 import kotlinx.android.synthetic.main.activity_text.*
 
 class TextActivity : AppCompatActivity() {
