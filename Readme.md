@@ -1,7 +1,7 @@
 
 [![](https://jitpack.io/v/DeMonLiu623/CrashHandler.svg)](https://jitpack.io/#DeMonLiu623/CrashHandler)
 
-### ErrorCatch
+### CrashHandler
 **一个基于Thread.UncaughtExceptionHandler实现收集Android程序崩溃异常信息的库。**
 
 本库的具体实现，可以参考：[Android 收集程序崩溃异常信息](https://blog.csdn.net/DeMonliuhui/article/details/82798484)
@@ -26,13 +26,11 @@ dependencies {
 	}
 ```
 
-#### 权限
+#### ~~权限~~
 
-~~需要读取设备内容的权限。~~
-```
-~~<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />~~~
-```
+~~需要读取设备内容的存储权限。~~
+
+>兼容AndroidQ作用域存储后，无需存储权限。
 
 #### 初始化
 初始化后每次程序崩溃发生便会自动收集错误信息，并保存下来。

@@ -21,8 +21,16 @@
         android:id="@+id/bug2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="空指针异常"
+        android:text="数字转换异常"
         app:layout_constraintStart_toEndOf="@id/bug1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/bug3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="空指针异常"
+        app:layout_constraintStart_toEndOf="@id/bug2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

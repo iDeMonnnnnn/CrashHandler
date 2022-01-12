@@ -95,11 +95,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             Log.w(TAG, "handleException--- ex==null");
             return;
         }
-        String msg = ex.getLocalizedMessage();
-        if (msg == null) {
-            return;
-        }
-        //收集设备信息
         //保存错误报告文件
         saveCrashInfoToFile(ex);
     }
@@ -140,7 +135,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             }
             //崩溃信息
             sb.append("\nTIME:").append(now);//崩溃时间
-            sb.append("\nEXCEPTION:").append(ex.getLocalizedMessage());
+            sb.append("\nEXCEPTION:").append(Log.getStackTraceString(ex));
             sb.append("\nSTACK_TRACE:").append(result);
             sb.append("\n");
             DFileUtils.writeTxt(logFile.getAbsolutePath(), sb.toString(), true);

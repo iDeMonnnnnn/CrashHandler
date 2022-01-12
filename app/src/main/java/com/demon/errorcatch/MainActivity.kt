@@ -1,6 +1,7 @@
 package com.demon.errorcatch
 
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -33,7 +34,11 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "bug1: " + list[1]) //模拟数组越界
         }
         bug2.setOnClickListener {
-            Log.i(TAG, "bug2:${10 / 0} ")
+            "abc".toInt()
+        }
+        bug3.setOnClickListener {
+            val info: ApplicationInfo? = null
+            info!!.className
         }
     }
 
